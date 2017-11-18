@@ -13,6 +13,8 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyB8LTw19hnoSo7CH54CWTTuczTsJzifU8M"/> <!-- Api unique key-->
 
+
+
         <activity android:name="com.example.android.shushme.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -26,5 +28,10 @@
             android:exported="false"/>
 
     </application>
+
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/><!-- Allows to use GPS, WIFI and CELL towers-->
+    <!--<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/> --> <!-- Allows to use only WIFI and CELL towers-->
+
 
 </manifest>

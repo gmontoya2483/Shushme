@@ -12,8 +12,8 @@ ShushMe allows you to pick a set of locations using Google's Places API, it then
 
 
 ## Instructions
-1. [Setup the API key](documentation\api_key_setup_instructions.md)
-2. Add the API key into the `AdroidManifest.xml`
+1. [Setup the API key](documentation/api_key_setup_instructions.md)
+2. Add the API key into the `AdroidManifest.xml` file
 ```xml
     <application
        .... >
@@ -38,6 +38,13 @@ dependencies {
 
     ...
 }
+```
+
+3. Add the following permissions into the `AndroidManifest.xml` file
+```xml
+    <uses-permission android:name="android.permission.INTERNET"/>
+        <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/><!-- Allows to use GPS, WIFI and CELL towers-->
+        <!--<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/> --> <!-- Allows to use only WIFI and CELL towers-->
 ```
 
 
