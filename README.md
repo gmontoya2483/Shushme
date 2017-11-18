@@ -12,7 +12,7 @@ ShushMe allows you to pick a set of locations using Google's Places API, it then
 
 
 ## Instructions
-1. [Setup the API key](.\Documentation\api_key_setup_instructions.md)
+1. [Setup the API key](documentation\api_key_setup_instructions.md)
 2. Add the API key into the `AdroidManifest.xml`
 ```xml
     <application
