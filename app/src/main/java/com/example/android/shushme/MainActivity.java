@@ -56,6 +56,16 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         setContentView(R.layout.activity_main);
 
 
+        // Set up the recycler view
+        mRecyclerView = (RecyclerView) findViewById(R.id.places_list_recycler_view);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mAdapter = new PlaceListAdapter(this);
+        mRecyclerView.setAdapter(mAdapter);
+
+
+        // Build up the LocationServices API client
+        // Uses the addApi method to request the LocationServices API
+        // Also uses enableAutoManage to automatically when to connect/suspend the client
         GoogleApiClient client = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
@@ -64,34 +74,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 .enableAutoManage(this,this)
                 .build();
 
-        // Set up the recycler view
-        mRecyclerView = (RecyclerView) findViewById(R.id.places_list_recycler_view);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mAdapter = new PlaceListAdapter(this);
-        mRecyclerView.setAdapter(mAdapter);
-
-
-
-
-
-
     }
 
-    /**
-     * Button Click event handler to handle clicking the "Add new location Button"
-     *
-     * @param view
-     */
-    public void onAddPlaceButtonClicked (View view){
 
-
-        //Check if the Access_FINE_LOCATION permision is granted
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
-            Toast.makeText(this,getString(R.string.need_location_permission_message), Toast.LENGTH_LONG).show();
-            return;
-        }
-            Toast.makeText(this,R.string.location_permissions_granted_message, Toast.LENGTH_LONG).show();
-    }
 
     @Override
     protected void onResume() {
@@ -107,20 +92,59 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         }
     }
 
+    /**
+     * Called when the Google API client is successfully connected
+     * @param connectionHint Bundle of data provided to clients by Google Play services
+     */
+
     @Override
-    public void onConnected(@Nullable Bundle bundle) {
+    public void onConnected(@Nullable Bundle connectionHint) {
         Log.i (TAG,"API Client Connection Successful!");
 
     }
 
+
+    /**
+     * Called when the Google API Client is suspended
+     * @param cause . The reason for the disconnection. Defined by constants CAUSE_*.
+     */
     @Override
-    public void onConnectionSuspended(int i) {
+    public void onConnectionSuspended(int cause) {
         Log.i (TAG,"API Client Connection Suspended!");
     }
 
+    /**
+     * Called when the Google API Client failed to connect to Google Play Services
+     * @param result . ConnectionResult that can be used for resolving the error
+     */
+
     @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+    public void onConnectionFailed(@NonNull ConnectionResult result) {
         Log.i (TAG,"API Client Connection Failed");
 
     }
+
+
+    /**
+     * Button Click event handler to handle clicking the "Add new location Button"
+     *
+     * @param view
+     */
+    public void onAddPlaceButtonClicked (View view){
+
+
+        //Check if the Access_FINE_LOCATION permision is granted
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+            Toast.makeText(this,getString(R.string.need_location_permission_message), Toast.LENGTH_LONG).show();
+            return;
+        }
+        Toast.makeText(this,R.string.location_permissions_granted_message, Toast.LENGTH_LONG).show();
+    }
+
+    public void onLocationPermissionClicked(View view) {
+               ActivityCompat.requestPermissions(MainActivity.this,
+                       new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                       PERMISSIONS_REQUEST_FINE_LOCATION);
+    }
+
 }

@@ -103,6 +103,7 @@
             android:background="@color/colorPrimary"
             android:text="@string/add_new_location"
             android:textAppearance="@style/TextAppearance.AppCompat.Button"
+            android:onClick="onAddPlaceButtonClicked"
             android:textColor="@android:color/white" />
 
         <TextView

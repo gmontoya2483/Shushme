@@ -50,6 +50,9 @@ dependencies {
 5. [Set the Google API Client](documentation/google_api_client.md)
 
 
+## Manage Permissions
+
+
 
 
 ## References
