@@ -40,12 +40,16 @@ dependencies {
 }
 ```
 
-3. Add the following permissions into the `AndroidManifest.xml` file
+4. Add the following permissions into the `AndroidManifest.xml` file
 ```xml
     <uses-permission android:name="android.permission.INTERNET"/>
         <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/><!-- Allows to use GPS, WIFI and CELL towers-->
         <!--<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/> --> <!-- Allows to use only WIFI and CELL towers-->
 ```
+
+5. [Set the Google API Client](documentation/google_api_client.md)
+
+
 
 
 ## References
