@@ -47,7 +47,11 @@ dependencies {
         <!--<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/> --> <!-- Allows to use only WIFI and CELL towers-->
 ```
 
-5. [Set the Google API Client](documentation/google_api_client.md)
+5. [Set the Google API Client](documentation/google_api_client.md)  
+
+6. [Set the Place picker](documentation/set_place_picker.md)  
+
+
 
 
 ## Manage Permissions
