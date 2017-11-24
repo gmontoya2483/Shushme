@@ -44,3 +44,7 @@ Your new Android-restricted API key appears in the list of API keys for your pro
 
 It may take up to 5 minutes for the key to be fully provisioned. If the key does not work immediately, try again in 5 minutes.
 
+
+## Easier Way !!!!
+
+[Get an API key from the Google API Console](https://developers.google.com/places/android-api/signup)

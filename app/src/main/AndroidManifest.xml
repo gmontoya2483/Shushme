@@ -11,12 +11,11 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyB8LTw19hnoSo7CH54CWTTuczTsJzifU8M"/> <!-- Api unique key-->
-
+            android:value="AIzaSyCqNt5qz9aiw2QFgdnfzkQHOiZhT8pQFIE"/> <!-- Api unique key-->
 
 
         <activity android:name="com.example.android.shushme.MainActivity">
-            <intent-filter>
+           <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
