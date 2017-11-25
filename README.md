@@ -1,5 +1,5 @@
 # ShushMe
-Google Places API demo app
+Demo Application which explains how to use the Google place API. The Demo and mos of the documentation are part of the **Udacity - Advance Android App Development** course.
 
 ## What is ShushMe
 
@@ -56,7 +56,7 @@ dependencies {
 
 ## Manage Permissions
 
-
+For managing the needed permissions, [Manage permissions](documentation/manage_permissions.md) Document.
 
 
 ## References

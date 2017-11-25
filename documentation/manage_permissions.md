@@ -4,6 +4,16 @@ Android 6.0 Marshmallow introduces a new model for handling permissions, which s
 
 If your app supports the new permissions model, the user does not have to grant any permissions when they install or upgrade the app. Instead, the app must request permissions when it needs them at runtime, and the system shows a dialog to the user asking for the permission.
 
+## How to define the permissions needed for the application
+
+```xml
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+
+```
+
+
+
 ## How to check the assigned permissions
 
 ```java
@@ -41,3 +51,8 @@ If your app supports the new permissions model, the user does not have to grant 
                                PERMISSIONS_REQUEST_FINE_LOCATION);
             }
 ```
+
+
+## References
+
+[System permissions policies](https://developer.android.com/guide/topics/permissions/index.html)
