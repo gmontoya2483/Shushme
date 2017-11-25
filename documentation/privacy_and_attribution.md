@@ -23,6 +23,18 @@ You should always make sure the Terms of Use and Privacy Policy are available in
 Make sure, as part of this exercise, to include the powered by Google logo and a link to the privacy policy at the bottom of the screen.
 
 
+## Set the powered by google Logo
+
+```xml
+         <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:padding="4dp"
+                    android:src="@drawable/powered_by_google_light" />
+```
+
+
 ## References
 
 [Google Maps APIs Terms of Services](https://developers.google.com/maps/terms)

@@ -49,7 +49,21 @@ dependencies {
 
 5. [Set the Google API Client](documentation/google_api_client.md)  
 
-6. [Set the Place picker](documentation/set_place_picker.md)  
+
+## Place Picker
+
+[Use the Place picker](documentation/use_place_picker.md)
+
+
+## Place by ID
+
+[Get place by ID]()
+
+
+## Privacy and Attribution
+
+[Privacy and Attributions](documentation/privacy_and_attribution.md)
+
 
 
 
