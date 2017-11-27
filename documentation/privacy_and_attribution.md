@@ -34,6 +34,8 @@ Make sure, as part of this exercise, to include the powered by Google logo and a
                     android:src="@drawable/powered_by_google_light" />
 ```
 
+![Screenshot1](../screenshots/powered_by_google.png)
+
 
 ## References
 
