@@ -23,7 +23,7 @@ Geofences are not adecuated for GPS pooling and the device could take a couple o
     ![Screenshot1](../screenshots/geofences_objects_list.png)
 
 
-3. Register the geofences by creating Geofence request object the list of geofences above
+3. Register the geofences by creating Geofence request object with the list of geofences from above
 
     ![Screenshot1](../screenshots/geofences_register.png)
 
