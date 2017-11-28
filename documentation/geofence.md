@@ -77,7 +77,7 @@ Geofences are not adecuated for GPS pooling and the device could take a couple o
         }
 ```
 
-3. Implement a update geofences list, which retrievee a place buffer and convert fills the mGeofenceList ArrayList
+3. Implement a update geofences list, which retrieves a place buffer and convert fills the mGeofenceList ArrayList
 
  ```java
         public class Geofencing {
@@ -85,7 +85,7 @@ Geofences are not adecuated for GPS pooling and the device could take a couple o
                 ...
 
 
-         /**
+            /**
              * Updates the local ArrayList of Geofences using data from the passed in List
              * Uses the Place ID defined by the API as the Geofence object id
              * @param places the PlaceBuffer result of the getPlaceById call
@@ -119,6 +119,314 @@ Geofences are not adecuated for GPS pooling and the device could take a couple o
 
                 ...
  ```
+
+4. Build the Geofence request Object
+
+```java
+
+   public class Geofencing {
+
+                   ...
+
+
+            /**
+            * Creates a GeofencingRequest object using the mGeofenceList ArrayList of Geofences
+            * used by {@code #registerGeofences}
+            *
+            * @return the geofencingRequest object
+            */
+
+           private GeofencingRequest getGeofencingRequest(){
+               GeofencingRequest.Builder builder = new GeofencingRequest.Builder();
+               builder.setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER);
+               builder.addGeofences(mGeofenceList);
+               return builder.build();
+
+           }
+
+
+
+                  ...
+
+```
+
+5. Create the Pending Intent which extends a broadcast receiver class
+
+    **5.1.** Create a BroadcastReceiver class
+
+    ```java
+
+        public class GeofenceBroadcastReceiver extends BroadcastReceiver {
+
+
+            public static final String TAG = GeofenceBroadcastReceiver.class.getSimpleName();
+
+
+            /**
+             * Handles the Broadcast message sent when the Geofence Transition is triggered
+             * Careful here thought this is running on the main thread so make sure you start an asynctask for anything that takes longer than say 10 seconds
+             * @param context
+             * @param intent
+             */
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Log.i(TAG, "onReceived called");
+            }
+        }
+
+     ```
+
+
+    ```AndroidManifest.xml```
+
+
+    ```xml
+
+        <application
+
+                ...
+
+                <receiver android:name=".GeofenceBroadcastReceiver"/>
+
+            </application>
+
+    ```
+
+    **5.2.** Create a create a helper method in the ```Geofencing``` class, ```getGeofencePendingIntent``` which will create the pending intent
+
+    ```java
+            /**
+             * Creates a PendingIntent object using the GeofenceTransitionsIntentService class
+             * used by {@code #registerGeoFences
+             * }
+             * @return the pendingIntet Object
+             */
+            private PendingIntent getmGeofencePendingIntent(){
+                //Pause the pending intent if we already have it.
+                if (mGeofencePendingIntent != null){
+                     return mGeofencePendingIntent;
+                }
+
+                Intent intent = new Intent(mContext,GeofenceBroadcastReceiver.class);
+                mGeofencePendingIntent = PendingIntent.getBroadcast(mContext, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                return mGeofencePendingIntent;
+            }
+    ```
+
+
+6.  Register the geofences
+
+    **6.1.** Create a new public method called ```registerAllGeofences``` within the ```Geofencing``` class
+
+    ```java
+        /**
+         * Register the list of Geofences specified in mGeofenceList with Google Place Services
+         * Uses {@code #mGoogleApiClient} to connect to Google Place Service
+         * Uses {@Link #getGeofencingRequest} to get the list of geofences to be registered
+         * Uses {@Link #getGeofencePendingIntent} to get the pending intent o launch the IntentService when the Geofence is triggered
+         * Triggers {@Link #onResult} when the geofences have been registered successfully
+         */
+        public void registerAllGeofences(){
+            //Check that the API client is connected and that the list has Geofences in it
+            if (mGoogleApiClient == null || !mGoogleApiClient.isConnected() || mGeofenceList == null || mGeofenceList.size()==0){
+                return;
+            }
+            try{
+                LocationServices.GeofencingApi.addGeofences(mGoogleApiClient,getGeofencingRequest(),getmGeofencePendingIntent()).setResultCallback(this);
+
+            }catch (SecurityException securityException){
+                Log.e (TAG, securityException.getMessage());
+
+            }
+
+        }
+   ```
+
+   **Note:**  the ```LocationServices.GeofencingApi``` is deprecated. Verify how to use the connectionless API ```GeofencingClient``` instead.
+
+    ```java
+        private GeofencingClient mGeofencingClient;
+
+        // ...
+
+        mGeofencingClient = LocationServices.getGeofencingClient(this);
+    ```
+
+    ```java
+            mGeofencingClient.addGeofences(getGeofencingRequest(), getGeofencePendingIntent())
+                .addOnSuccessListener(this, new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        // Geofences added
+                        // ...
+                    }
+                })
+                .addOnFailureListener(this, new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        // Failed to add geofences
+                        // ...
+                    }
+                });
+
+    ```
+
+
+
+    **6.2.** Make the Geofencing class implement the ```ResultCallback``` interface and implement the ```onResult``` method
+
+    ```java
+        public class Geofencing implements ResultCallback {
+
+        \\...
+
+        @Override
+            public void onResult(@NonNull Result result) {
+
+                Log.e(TAG, String.format("Error adding/removing geofence : %s",
+                        result.getStatus().toString()));
+
+            }
+
+
+        }
+     ```
+
+7. Unregister all the Geofences
+
+```java
+        /**
+         * Unregister the list of Geofences specified in mGeofenceList with Google Place Services
+         * Uses {@code #mGoogleApiClient} to connect to Google Place Service
+         * Uses {@Link #getGeofencePendingIntent} to get the pending intent o launch the IntentService when the Geofence is triggered
+         * Triggers {@Link #onResult} when the geofences have been unregistered successfully
+         */
+        public void unRegisterAllGeofences(){
+            if (mGoogleApiClient == null || !mGoogleApiClient.isConnected()){
+                return;
+            }
+            try{
+                LocationServices.GeofencingApi.removeGeofences(mGoogleApiClient,getmGeofencePendingIntent()).setResultCallback(this);
+
+            }catch (SecurityException securityException){
+                Log.e (TAG, securityException.getMessage());
+            }
+
+        }
+ ```
+
+**Note:**  the ```LocationServices.GeofencingApi``` is deprecated. Verify how to use the connectionless API ```GeofencingClient``` instead.
+
+```java
+    mGeofencingClient.removeGeofences(getGeofencePendingIntent())
+            .addOnSuccessListener(this, new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    // Geofences removed
+                    // ...
+                }
+            })
+            .addOnFailureListener(this, new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    // Failed to remove geofences
+                    // ...
+                }
+            });
+```
+
+
+8. Setup everything in the MainActivity
+
+    **8.1.** Create an instance of the ```Geofencing``` class
+
+
+    ```java
+
+        ...
+
+        private Geofencing mGeofencing;
+
+        ...
+
+        @Override
+            protected void onCreate(Bundle savedInstanceState) {
+
+                ...
+
+                mGeofencing = new Geofencing(this, mClient);
+
+                ...
+
+            }
+
+    ```
+
+    **8.2.** Initialize the switch state and handle enable/disable switch change
+
+    ```java
+
+        private boolean mIsEnabled;
+
+        ...
+
+        @Override
+            protected void onCreate(Bundle savedInstanceState) {
+
+                ...
+
+
+                // Initialize the switch state and Handle enable/disable switch change
+                Switch onOffSwitch = (Switch) findViewById(R.id.enable_switch);
+                mIsEnabled = getPreferences(MODE_PRIVATE).getBoolean(getString(R.string.setting_enabled), false);
+                onOffSwitch.setChecked(mIsEnabled);
+                onOffSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        SharedPreferences.Editor editor = getPreferences(MODE_PRIVATE).edit();
+                        editor.putBoolean(getString(R.string.setting_enabled), isChecked);
+                        mIsEnabled = isChecked;
+                        editor.commit();
+                        if (isChecked) mGeofencing.registerAllGeofences();
+                        else mGeofencing.unRegisterAllGeofences();
+                    }
+
+                });
+
+                ....
+
+    ```
+
+
+    **8.3.** Within the ```refreshPlacesData()``` method in the ```onResult``` update the list of places and register the all the geofences if the switch is enables
+
+     ```java
+            /**
+             * Queries all the locally stored Places IDs
+             * Calls Places.GeoDataApi.getPlaceById with that list of IDs
+             * Note: When calling Places.GeoDataApi.getPlaceById use the same GoogleApiClient created
+             * in MainActivity's onCreate (you will have to declare it as a private member)
+             */
+            public void refreshPlacesData() {
+
+            ...
+
+
+                PendingResult<PlaceBuffer> placeResult = Places.GeoDataApi.getPlaceById(mClient, guids.toArray(new String[guids.size()]));
+
+                placeResult.setResultCallback(new ResultCallback<PlaceBuffer>() {
+                    @Override
+                    public void onResult(@NonNull PlaceBuffer places) {
+                        mAdapter.swapPlaces(places);
+                        mGeofencing.updateGeofencesList(places);
+                        if (mIsEnabled) mGeofencing.registerAllGeofences();
+
+                    }
+                });
+            }
+
+     ```
+
 
 
 ## References
